@@ -15,7 +15,8 @@ public enum ErrorCode {
     PASSWORD_INVALID(1003, "Password must be at least 8 characters"),
     USER_NOT_FOUND(1004, "User not found"),
     USER_HAS_BEEN_DELETED(1005, "User has been deleted"),
-    USER_NOT_EXISTED(1006, "User not existed")
+    USER_NOT_EXISTED(1006, "User not existed"),
+    UNAUTHENTICATED(1007, "Unauthenticated")
     ;
 
     int code;

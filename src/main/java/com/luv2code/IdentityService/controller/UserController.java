@@ -4,14 +4,11 @@ import com.luv2code.IdentityService.dto.request.ApiResponse;
 import com.luv2code.IdentityService.dto.request.UserCreationRequest;
 import com.luv2code.IdentityService.dto.request.UserUpdateRequest;
 import com.luv2code.IdentityService.dto.response.UserResponse;
-import com.luv2code.IdentityService.entity.User;
-import com.luv2code.IdentityService.mapper.UserMapper;
 import com.luv2code.IdentityService.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
