@@ -4,7 +4,6 @@ import com.luv2code.IdentityService.dto.request.AuthenticationRequest;
 import com.luv2code.IdentityService.dto.request.IntrospectRequest;
 import com.luv2code.IdentityService.dto.response.AuthenticationResponse;
 import com.luv2code.IdentityService.dto.response.IntrospectResponse;
-import com.luv2code.IdentityService.entity.User;
 import com.luv2code.IdentityService.exception.AppException;
 import com.luv2code.IdentityService.exception.ErrorCode;
 import com.luv2code.IdentityService.repository.UserRepository;
@@ -31,12 +30,12 @@ import java.util.Date;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthenticationService {
+
     UserRepository userRepository;
 
     @NonFinal
     @Value("${jwt.signerKey}")
     protected String SIGNER_KEY;
-
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
