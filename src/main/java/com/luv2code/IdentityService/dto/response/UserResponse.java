@@ -1,10 +1,11 @@
 package com.luv2code.IdentityService.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,8 +14,9 @@ import java.time.LocalDate;
 public class UserResponse {
     String id;
     String username;
-    String password;
+//  String password;
     String firstname;
     String lastname;
     LocalDate dob;
+    Set<String> roles;
 }

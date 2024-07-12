@@ -4,6 +4,7 @@ import com.luv2code.IdentityService.dto.request.AuthenticationRequest;
 import com.luv2code.IdentityService.dto.request.IntrospectRequest;
 import com.luv2code.IdentityService.dto.response.AuthenticationResponse;
 import com.luv2code.IdentityService.dto.response.IntrospectResponse;
+import com.luv2code.IdentityService.entity.User;
 import com.luv2code.IdentityService.exception.AppException;
 import com.luv2code.IdentityService.exception.ErrorCode;
 import com.luv2code.IdentityService.repository.UserRepository;
@@ -20,11 +21,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 @RequiredArgsConstructor
@@ -63,7 +66,7 @@ public class AuthenticationService {
         if(!authenticated)
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-        var token = generateToken(request.getUsername());
+        var token = generateToken(user); //request.getUsername()
 
         return AuthenticationResponse.builder()
                 .token(token)
@@ -71,17 +74,17 @@ public class AuthenticationService {
                 .build();
     }
 
-    private String generateToken(String username){
+    private String generateToken(User user){
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet jwtClaimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
+                .subject(user.getUsername())
                 .issuer("devteria.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(
                         Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()
                 ))
-                .claim("customerClaim", "Custom")
+                .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -92,8 +95,16 @@ public class AuthenticationService {
             jwsObject.sign(new MACSigner(SIGNER_KEY.getBytes()));
             return jwsObject.serialize();
         } catch (JOSEException e) {
-//            log.error("Cannot create token ", e);
+            //log.error("Cannot create token ", e);
             throw new RuntimeException(e);
         }
+    }
+
+    private String buildScope(User user){
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        if(!CollectionUtils.isEmpty(user.getRoles()))
+            user.getRoles().forEach(stringJoiner::add); //s -> stringJoiner.add(s)
+
+        return stringJoiner.toString();
     }
 }
