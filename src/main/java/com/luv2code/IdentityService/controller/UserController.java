@@ -40,7 +40,6 @@ public class UserController {
         log.info("Username: {}", authentication.getName());
         authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
 
-
         return ApiResponse.<List<UserResponse>>builder()
                 .results(userService.getUser())
                 .build();
@@ -50,6 +49,13 @@ public class UserController {
     public ApiResponse<UserResponse> getUser(@PathVariable String userId){
         return ApiResponse.<UserResponse>builder()
                 .results(userService.getUser(userId))
+                .build();
+    }
+
+    @GetMapping("/getInfo")
+    public ApiResponse<UserResponse> getMyInfo(){
+        return ApiResponse.<UserResponse>builder()
+                .results(userService.getMyInfo())
                 .build();
     }
 

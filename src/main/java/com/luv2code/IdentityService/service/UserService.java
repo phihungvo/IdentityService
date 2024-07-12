@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,11 +33,12 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getUser(){
-        List<UserResponse> userResponse = userMapper.toListUserResponse(userRepository.findAll());
-        return userResponse;
+        return userMapper.toListUserResponse(userRepository.findAll());
     }
 
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUser(String userId){
         return userMapper.toUserResponse(userRepository.findById(userId)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
@@ -51,12 +55,22 @@ public class UserService {
         HashSet<String> roles = new HashSet<>();
         roles.add(Role.USER.name());
         user.setRoles(roles);
-
         try {
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException exception){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+        return userMapper.toUserResponse(user);
+    }
+
+    //get user authenticated without id
+    public UserResponse getMyInfo(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        User user = userRepository.findByUsername(name)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
         return userMapper.toUserResponse(user);
     }
 
