@@ -1,6 +1,5 @@
 package com.luv2code.IdentityService.service;
 
-import com.luv2code.IdentityService.dto.request.ApiResponse;
 import com.luv2code.IdentityService.dto.request.UserCreationRequest;
 import com.luv2code.IdentityService.dto.request.UserUpdateRequest;
 import com.luv2code.IdentityService.dto.response.UserResponse;
@@ -13,7 +12,6 @@ import com.luv2code.IdentityService.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
