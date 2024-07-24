@@ -18,7 +18,8 @@ public enum ErrorCode {
     USER_HAS_BEEN_DELETED(1005, "User has been deleted", HttpStatus.BAD_REQUEST),
     USER_NOT_EXISTED(1006, "User not existed", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1007, "Unauthenticated", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1008, "You don't have permission", HttpStatus.FORBIDDEN)
+    UNAUTHORIZED(1008, "You don't have permission", HttpStatus.FORBIDDEN),
+    INVALID_DOB(1009, "Invalid Date of Birth", HttpStatus.BAD_REQUEST)
     ;
 
     int code;

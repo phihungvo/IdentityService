@@ -1,13 +1,15 @@
 package com.luv2code.IdentityService.service;
 
+import com.luv2code.IdentityService.constant.PredefinedRole;
 import com.luv2code.IdentityService.dto.request.UserCreationRequest;
 import com.luv2code.IdentityService.dto.request.UserUpdateRequest;
 import com.luv2code.IdentityService.dto.response.UserResponse;
+import com.luv2code.IdentityService.entity.Role;
 import com.luv2code.IdentityService.entity.User;
-import com.luv2code.IdentityService.enums.Role;
 import com.luv2code.IdentityService.exception.AppException;
 import com.luv2code.IdentityService.exception.ErrorCode;
 import com.luv2code.IdentityService.mapper.UserMapper;
+import com.luv2code.IdentityService.repository.RoleRepository;
 import com.luv2code.IdentityService.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getUser(){
@@ -50,9 +53,10 @@ public class UserService {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-      //  user.setRoles(roles);
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+        user.setRoles(roles);
+
         try {
             user = userRepository.save(user);
         } catch (DataIntegrityViolationException exception){
@@ -78,6 +82,10 @@ public class UserService {
         userMapper.updateUser(user, request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
+
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

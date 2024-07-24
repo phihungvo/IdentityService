@@ -23,15 +23,15 @@ import java.util.List;
 @Slf4j
 public class UserController {
 
-    //private static final Logger log = LoggerFactory.getLogger(UserController.class);
-    UserService userService;
+        //private static final Logger log = LoggerFactory.getLogger(UserController.class);
+        UserService userService;
 
-        @PostMapping
-        public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
+    @PostMapping
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
             return ApiResponse.<UserResponse>builder()
-                    .results(userService.createUser(request))
-                    .build();
-        }
+            .results(userService.createUser(request))
+            .build();
+    }
 
     @GetMapping
     public ApiResponse<List<UserResponse>> getUser(){
