@@ -3,6 +3,7 @@ package com.luv2code.IdentityService.controller;
 import com.luv2code.IdentityService.dto.request.ApiResponse;
 import com.luv2code.IdentityService.dto.request.AuthenticationRequest;
 import com.luv2code.IdentityService.dto.request.IntrospectRequest;
+import com.luv2code.IdentityService.dto.request.LogoutRequest;
 import com.luv2code.IdentityService.dto.response.AuthenticationResponse;
 import com.luv2code.IdentityService.dto.response.IntrospectResponse;
 import com.luv2code.IdentityService.service.AuthenticationService;
@@ -38,6 +39,13 @@ public class AuthenticationController {
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder()
                 .results(result)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    public ApiResponse<Void> logout(@RequestBody LogoutRequest request) throws ParseException, JOSEException {
+        authenticationService.logout(request);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 }

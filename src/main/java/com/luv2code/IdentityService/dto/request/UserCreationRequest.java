@@ -15,14 +15,14 @@ import java.util.Set;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreationRequest {
-    @Size(min = 3, message = "USERNAME_INVALID")
+    @Size(min = 4, message = "USERNAME_INVALID")
     String username;
-    @Size(min = 8, message = "PASSWORD_INVALID")
+    @Size(min = 7, message = "PASSWORD_INVALID")
     String password;
     String firstname;
     String lastname;
 
-    @DobConstraint(min = 2, message = "INVALID_DOB")
+    @DobConstraint(min = 16, message = "INVALID_DOB")
     LocalDate dob;
 
 }
