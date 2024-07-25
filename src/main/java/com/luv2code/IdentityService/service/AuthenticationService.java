@@ -3,6 +3,7 @@ package com.luv2code.IdentityService.service;
 import com.luv2code.IdentityService.dto.request.AuthenticationRequest;
 import com.luv2code.IdentityService.dto.request.IntrospectRequest;
 import com.luv2code.IdentityService.dto.request.LogoutRequest;
+import com.luv2code.IdentityService.dto.request.RefreshRequest;
 import com.luv2code.IdentityService.dto.response.AuthenticationResponse;
 import com.luv2code.IdentityService.dto.response.IntrospectResponse;
 import com.luv2code.IdentityService.entity.InvalidatedToken;
@@ -109,8 +110,35 @@ public class AuthenticationService {
         if(invalidatedTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
-
         return signedJWT;
+    }
+
+
+    public AuthenticationResponse refreshToken(RefreshRequest request)
+            throws ParseException, JOSEException {
+
+         var signedJWT = verifyToken(request.getToken());
+
+         var jit = signedJWT.getJWTClaimsSet().getJWTID();
+         var expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jit)
+                .expiryTime(expiryTime)
+                .build();
+        invalidatedTokenRepository.save(invalidatedToken);
+
+        var username = signedJWT.getJWTClaimsSet().getSubject();
+
+        var user = userRepository.findByUsername(username)
+                .orElseThrow(()-> new AppException(ErrorCode.UNAUTHENTICATED));
+
+        var token = generateToken(user); //request.getUsername()
+
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .build();
     }
 
 

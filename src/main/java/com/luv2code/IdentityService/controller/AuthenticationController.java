@@ -1,9 +1,6 @@
 package com.luv2code.IdentityService.controller;
 
-import com.luv2code.IdentityService.dto.request.ApiResponse;
-import com.luv2code.IdentityService.dto.request.AuthenticationRequest;
-import com.luv2code.IdentityService.dto.request.IntrospectRequest;
-import com.luv2code.IdentityService.dto.request.LogoutRequest;
+import com.luv2code.IdentityService.dto.request.*;
 import com.luv2code.IdentityService.dto.response.AuthenticationResponse;
 import com.luv2code.IdentityService.dto.response.IntrospectResponse;
 import com.luv2code.IdentityService.service.AuthenticationService;
@@ -38,6 +35,14 @@ public class AuthenticationController {
     public ApiResponse<IntrospectResponse> authenticated(@RequestBody IntrospectRequest request) throws ParseException, JOSEException {
         var result = authenticationService.introspect(request);
         return ApiResponse.<IntrospectResponse>builder()
+                .results(result)
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    public ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(request);
+        return ApiResponse.<AuthenticationResponse>builder()
                 .results(result)
                 .build();
     }
