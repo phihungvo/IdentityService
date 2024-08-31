@@ -192,4 +192,58 @@ public class AuthenticationControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
 
+    @Test
+    public void authenticateUser_validRequest_success() throws Exception {
+        // Given
+        Mockito.when(authenticationService.authenticate(Mockito.any(AuthenticationRequest.class)))
+                .thenReturn(authResponse);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(authRequest);
+
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.results.token").value("validToken"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.results.authenticated").value(true));
+    }
+
+
+    @Test
+    public void authenticateUser_invalidCredentials_fail() throws Exception {
+        // Given
+        Mockito.when(authenticationService.authenticate(Mockito.any(AuthenticationRequest.class)))
+                .thenThrow(new AppException(ErrorCode.UNAUTHENTICATED));
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(authRequest);
+
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/token")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
+    }
+
+
+    @Test
+    public void introspectToken_validToken_success() throws Exception {
+        // Given
+        Mockito.when(authenticationService.introspect(Mockito.any(IntrospectRequest.class)))
+                .thenReturn(introspectResponse);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        String content = objectMapper.writeValueAsString(introspectRequest);
+
+        // When & Then
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/introspect")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(content))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.results.valid").value(true));
+    }
+
+
 }
