@@ -1,5 +1,5 @@
 ﻿# IdentityService
- This microservice is responsible for:
+ This service is responsible for:
 
 * Onboarding users
 * Roles and permissions
